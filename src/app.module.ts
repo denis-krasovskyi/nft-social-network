@@ -8,6 +8,8 @@ import { Neo4jConfig } from './neo4j/neo4j-config.interface';
 import { Neo4jModule } from './neo4j/neo4j.module';
 
 import { NearIndexerModule } from './near-indexer/near-indexer.module';
+import { NearApiModule } from './near-api/near-api.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { NearIndexerModule } from './near-indexer/near-indexer.module';
       }),
     }),
     NearIndexerModule,
+    NearApiModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
