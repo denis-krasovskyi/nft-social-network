@@ -34,6 +34,8 @@
     "joi": "^17.5.0",
     "mongoose": "^6.1.2",
     "pg": "^8.7.1",
+    "class-transformer": "^0.5.1",
+    "neo4j-driver": "^4.4.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
