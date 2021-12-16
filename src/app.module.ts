@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { configuration, ConfigValidationSchema } from './config';
 import { MongooseModule } from '@nestjs/mongoose';
 
+import { NearIndexerModule } from './near-indexer/near-indexer.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +22,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       }),
       inject: [ConfigService],
     }),
+    NearIndexerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
