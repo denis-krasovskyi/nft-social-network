@@ -1,18 +1,24 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { validate } from 'class-validator';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ValidationSchema } from './config/validation/schema';
-import { configuration } from './config';
+import { configuration, ConfigValidationSchema } from './config';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: configuration,
-      validate: (config) => validate(ValidationSchema, config),
+      validationSchema: ConfigValidationSchema,
       envFilePath: ['.env.local', '.env'],
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('mongo.uri'),
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],

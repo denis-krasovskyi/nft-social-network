@@ -1,3 +1,5 @@
 import { app } from './app';
+import { mongo } from './mongo';
 
-export const configuration = [app];
+export { ConfigValidationSchema } from './validation/schema';
+export const configuration = [app, mongo];
