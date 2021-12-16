@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const logger = new Logger('app');
+  const logger = new Logger('App');
 
   const app = await NestFactory.create(AppModule);
 
