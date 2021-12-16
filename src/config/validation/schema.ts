@@ -7,6 +7,18 @@ export const ConfigValidationSchema = Joi.object({
   PORT: Joi.number().default(3000),
 
   MONGODB_URI: Joi.string().required(),
+  NEAR_INDEXER_DATABASE_HOST: Joi.string().required(),
+  NEAR_INDEXER_DATABASE_PORT: Joi.number().required(),
+  NEAR_INDEXER_DATABASE_NAME: Joi.string().required(),
+  NEAR_INDEXER_DATABASE_USERNAME: Joi.string().required(),
+  NEAR_INDEXER_DATABASE_PASSWORD: Joi.string().required(),
+
+  NEAR_NETWORK_ID: Joi.string().required(),
+  NEAR_NODE_URL: Joi.string().required(),
+  NEAR_WALLET_URL: Joi.string().required(),
+  NEAR_HELPER_URL: Joi.string().required(),
+  NEAR_EXPLORER_URL: Joi.string().required(),
+  NEAR_PROVIDER_URL: Joi.string().required(),
 
   NEO4J_SCHEME: Joi.string().default('neo4j'),
   NEO4J_HOST: Joi.string().required(),

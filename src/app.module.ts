@@ -9,6 +9,9 @@ import { Neo4jModule } from './neo4j/neo4j.module';
 import { InstagramAuthModule } from '@nestjs-hybrid-auth/instagram';
 import { AuthModule } from './auth/auth.module';
 
+import { NearIndexerModule } from './near-indexer/near-indexer.module';
+import { NearApiModule } from './near-api/near-api.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -45,6 +48,8 @@ import { AuthModule } from './auth/auth.module';
         callbackURL: configService.get('instagram.callbackURL'),
       }),
     }),
+    NearIndexerModule,
+    NearApiModule,
     AuthModule,
   ],
   controllers: [AppController],
