@@ -6,6 +6,8 @@ import { configuration, ConfigValidationSchema } from './config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Neo4jConfig } from './neo4j/neo4j-config.interface';
 import { Neo4jModule } from './neo4j/neo4j.module';
+import { InstagramAuthModule } from '@nestjs-hybrid-auth/instagram';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -34,6 +36,16 @@ import { Neo4jModule } from './neo4j/neo4j.module';
         database: configService.get('neo4j.database'),
       }),
     }),
+    InstagramAuthModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        clientID: configService.get('instagram.clientID'),
+        clientSecret: configService.get('instagram.clientSecret'),
+        callbackURL: configService.get('instagram.callbackURL'),
+      }),
+    }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
