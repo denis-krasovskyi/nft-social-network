@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { connect, Near, providers } from 'near-api-js';
+import { Account, connect, Near, providers } from 'near-api-js';
 import { UnencryptedFileSystemKeyStore } from 'near-api-js/lib/key_stores';
 import { Provider } from 'near-api-js/lib/providers';
 import { join } from 'path';
@@ -8,6 +8,7 @@ import { homedir } from 'os';
 export type NearApiProvider = {
   provider: Provider;
   near: Near;
+  account: Account;
 };
 
 export const nearApiProvider = {
@@ -19,6 +20,7 @@ export const nearApiProvider = {
     const {
       networkId,
       nodeUrl,
+      accountId,
       walletUrl,
       helperUrl,
       providerUrl,
@@ -35,11 +37,13 @@ export const nearApiProvider = {
       helperUrl,
       headers: {},
     });
+    const account = await near.account(accountId);
     const provider = new providers.JsonRpcProvider({ url: providerUrl });
 
     return {
       near,
       provider,
+      account,
     };
   },
 };

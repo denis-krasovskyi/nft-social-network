@@ -16,14 +16,16 @@ export class AccountAccessGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const [accountId, publicKey, signature] =
-      req.headers.Authorization?.split(' ') || [];
+      req.headers.authorization?.split(' ') || [];
+
     const account = await this.nearApiService.getAccount(accountId);
 
-    if (!account) {
-      return false;
+    let accessKeys;
+    try {
+      accessKeys = await account.getAccessKeys();
+    } catch (err) {
+      throw new ForbiddenException(`Authorization header is invalid`);
     }
-
-    const accessKeys = await account.getAccessKeys();
 
     if (!accessKeys.find((key) => key.public_key === publicKey)) {
       throw new ForbiddenException(
@@ -39,12 +41,14 @@ export class AccountAccessGuard implements CanActivate {
         PublicKey.fromString(publicKey).data,
       );
     } catch (error) {
-      throw new ForbiddenException(error.message);
+      throw new ForbiddenException('Invalid signature');
     }
 
     if (!isValid) {
       throw new ForbiddenException('Invalid signature');
     }
+
+    req.near = { accountId };
 
     return isValid;
   }

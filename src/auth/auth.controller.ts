@@ -1,11 +1,24 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import {
   InstagramAuthResult,
   UseInstagramAuth,
 } from '@nestjs-hybrid-auth/instagram';
 
+import { UserDto } from 'src/user/dto/user.dto';
+import { AuthService } from './auth.service';
+import { AccountAccessGuard } from './guards/account.guard';
+
 @Controller('auth')
 export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  // TODO: Rework with wallet callback
+  @UseGuards(AccountAccessGuard)
+  @Get('near')
+  async loginWithNear(@Request() req): Promise<UserDto> {
+    return this.authService.loginWithNear(req.near.accountId);
+  }
+
   @UseInstagramAuth()
   @Get('instagram')
   loginWithInstagram() {
