@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { NftService } from 'src/nft/nft.service';
 import { NearApiService } from 'src/near-api/near-api.service';
-import { UserDocument } from 'src/user/schemas/user.schema';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +37,7 @@ export class AuthService {
     return true;
   }
 
-  private generateJwt(user: UserDocument): string {
-    return this.jwtService.sign({ userId: user._id });
+  private generateJwt(user: User): string {
+    return this.jwtService.sign({ userId: user.id });
   }
 }

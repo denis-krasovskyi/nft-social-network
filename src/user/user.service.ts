@@ -1,35 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-
-import { User, UserDocument } from './schemas/user.schema';
-import { UserDto } from './dto/user.dto';
+import { User } from './entities/user.entity';
+import { UserDto } from './dto/user.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
 
-  async create(user: UserDto): Promise<UserDocument> {
-    const model = await this.userModel.create(user);
-    return model.save();
+  async create(userDto: UserDto): Promise<User> {
+    const user = new User();
+    user.username = userDto.username;
+    user.bio = userDto.bio;
+    user.nearAccounts = userDto.nearAccounts;
+    user.profilePicture = userDto.profilePicture;
+
+    return this.userRepository.create(user);
   }
 
-  async addNearAccount(
-    userId: string,
-    accountId: string,
-  ): Promise<UserDocument> {
-    const model = await this.findById(userId);
-    model.nearAccounts = [...model.nearAccounts, accountId];
-    return model.save();
+  async addNearAccount(userId: string, accountId: string): Promise<User> {
+    const user = await this.userRepository.findOne(userId);
+    user.nearAccounts = [...user.nearAccounts, accountId];
+
+    return this.userRepository.save(user);
   }
 
-  async findByNearAccount(accountId: string): Promise<UserDocument> {
-    return this.userModel
-      .findOne({ nearAccounts: { $in: [accountId] } })
-      .exec();
+  async findByNearAccount(accountId: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: { nearAccounts: { $in: [accountId] } },
+    });
   }
 
-  async findById(userId: string): Promise<UserDocument> {
-    return this.userModel.findById(userId).exec();
+  async findById(userId: string): Promise<User> {
+    return this.userRepository.findOne(userId);
   }
 }

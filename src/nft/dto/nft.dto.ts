@@ -12,17 +12,20 @@ export interface NftDto {
 
 export function castNft(
   contractId: string,
-  accountId: string,
-  nft,
-  metadata,
+  nearAccountId: string,
+  nft: any,
+  metadata: any,
+  userId: string,
 ): NftDto {
   const nftToken = camelcaseKeys(nft, { deep: true });
   const nftMetadata = camelcaseKeys(metadata, { deep: true });
   const tokenId = nftToken.id || nftToken.tokenId;
+
   return {
     ...nftToken,
     contractId,
-    accountId: accountId,
+    userId,
+    nearAccountId,
     tokenId: tokenId,
     owner: nftToken.ownerId.account || nftToken.ownerId,
     media: nftMetadata.media,

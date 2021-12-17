@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configuration, ConfigValidationSchema } from './config';
-import { MongooseModule } from '@nestjs/mongoose';
 import { Neo4jConfig } from './neo4j/neo4j-config.interface';
 import { Neo4jModule } from './neo4j/neo4j.module';
 import { InstagramAuthModule } from '@nestjs-hybrid-auth/instagram';
@@ -14,6 +13,8 @@ import { NearApiModule } from './near-api/near-api.module';
 import { NftModule } from './nft/nft.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
+import { UserModule } from './user/user.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -24,16 +25,9 @@ import { TypeOrmConfigService } from './config/typeorm-config.service';
       envFilePath: ['.env.local', '.env'],
     }),
     TypeOrmModule.forRootAsync({
-      name: 'database-mongo',
       useClass: TypeOrmConfigService,
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('mongo.uri'),
-      }),
-      inject: [ConfigService],
-    }),
+
     Neo4jModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -59,6 +53,8 @@ import { TypeOrmConfigService } from './config/typeorm-config.service';
     NearApiModule,
     AuthModule,
     NftModule,
+    UserModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

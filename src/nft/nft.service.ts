@@ -1,46 +1,55 @@
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { lastValueFrom, map } from 'rxjs';
 import { PromisePool } from '@supercharge/promise-pool';
-
-import { Nft, NftDocument } from 'src/nft/schemas/nft.schema';
-import {
-  NftContract,
-  NftContractDocument,
-} from 'src/nft/schemas/nft-contract.schema';
-import { NftEvent, NftEventDocument } from 'src/nft/schemas/nft-event.schema';
 import { NearIndexerService } from 'src/near-indexer/near-indexer.service';
 import { NearApiService } from 'src/near-api/near-api.service';
 
 import { castNftContract, NftContractDto } from './dto/nft-contract.dto';
 import { castNft } from './dto/nft.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Nft } from './entities/nft.entity';
+import { NftContract } from './entities/nft-contract.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class NftService {
   constructor(
-    @InjectModel(Nft.name) private nftModel: Model<NftDocument>,
-    @InjectModel(NftContract.name)
-    private nftContractModel: Model<NftContractDocument>,
-    @InjectModel(NftEvent.name) private nftEventModel: Model<NftEventDocument>,
+    @InjectRepository(Nft)
+    private nftRepository: Repository<Nft>,
+
+    @InjectRepository(NftContract)
+    private nftContractRepository: Repository<NftContract>,
+
+    private readonly userService: UserService,
     private readonly nearIndexerService: NearIndexerService,
     private readonly nearApiService: NearApiService,
     private readonly httpService: HttpService,
   ) {}
 
   async loadAllAccountNfts(accountId: string) {
+    const user = await this.userService.findByNearAccount(accountId);
+
     const nftContracts = await this.nearIndexerService.findLikelyNFTs(
       accountId,
     );
     await PromisePool.withConcurrency(5)
       .for(nftContracts)
       .process(async (nftContract) =>
-        this.loadAccountNftsByContract(nftContract, accountId),
+        this.loadAccountNftsByContract(
+          nftContract,
+          accountId,
+          user.id.toString(),
+        ),
       );
   }
 
-  async loadAccountNftsByContract(nftContractId: string, accountId: string) {
+  async loadAccountNftsByContract(
+    nftContractId: string,
+    accountId: string,
+    userId: string,
+  ) {
     const nfts = await this.nearApiService.getAccountNfts(
       nftContractId,
       accountId,
@@ -51,23 +60,30 @@ export class NftService {
     await PromisePool.withConcurrency(5)
       .for(nfts)
       .process(async (nft) =>
-        this.loadAccountNft(accountId, nftContractDto, nft),
+        this.loadAccountNft(accountId, nftContractDto, nft, userId),
       );
 
-    await this.nftContractModel.updateOne(
-      { contractId: nftContractId },
-      nftContractDto,
-      { upsert: true },
-    );
+    return this.nftContractRepository.update(nftContractId, nftContractDto);
   }
 
-  async loadAccountNft(accountId: string, nftContractDto: NftContractDto, nft) {
+  async loadAccountNft(
+    accountId: string,
+    nftContractDto: NftContractDto,
+    nft,
+    userId: string,
+  ) {
     const metadata = await this.loadNftMetadata(nftContractDto, nft);
-    const nftDto = castNft(nftContractDto.contractId, accountId, nft, metadata);
-    await this.nftModel.updateOne(
+    const nftDto = castNft(
+      nftContractDto.contractId,
+      accountId,
+      nft,
+      metadata,
+      userId,
+    );
+
+    return this.nftRepository.update(
       { contractId: nftContractDto.contractId, tokenId: nftDto.tokenId },
       nftDto,
-      { upsert: true },
     );
   }
 

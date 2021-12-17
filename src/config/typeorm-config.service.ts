@@ -5,7 +5,7 @@ import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
-  createTypeOrmOptions(name: string): TypeOrmModuleOptions {
+  createTypeOrmOptions(name = 'database-mongo'): TypeOrmModuleOptions {
     const {
       type,
       host,
