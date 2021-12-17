@@ -1,6 +1,5 @@
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { Comment } from 'src/comments/entities/comment.entity';
 import { Nft } from 'src/nft/entities/nft.entity';
@@ -20,6 +19,5 @@ export const databaseMongo = registerAs(
     // password: process.env.MONGO_DATABASE_PASSWORD,
     entities: [Comment, User, Nft, NftContract, NftEvent],
     synchronize: false,
-    namingStrategy: new SnakeNamingStrategy(),
   }),
 );

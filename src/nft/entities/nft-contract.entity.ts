@@ -4,7 +4,7 @@ import { Nft } from './nft.entity';
 
 @Entity()
 export class NftContract extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ unique: true })
   contractId: string;
 
   @Column()

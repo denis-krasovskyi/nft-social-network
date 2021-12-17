@@ -20,9 +20,8 @@ export function castNft(
   const nftToken = camelcaseKeys(nft, { deep: true });
   const nftMetadata = camelcaseKeys(metadata, { deep: true });
   const tokenId = nftToken.id || nftToken.tokenId;
-
+  delete nftToken.id;
   return {
-    id: `${contractId}-${contractId}`,
     ...nftToken,
     contractId,
     userId,

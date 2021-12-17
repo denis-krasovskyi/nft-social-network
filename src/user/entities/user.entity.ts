@@ -1,14 +1,22 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/common/base.entity';
 import { Nft } from 'src/nft/entities/nft.entity';
+
+export class UserNearAccount {
+  @Column()
+  accountId: string;
+
+  @Column()
+  enabled: boolean;
+}
 
 @Entity()
 export class User extends BaseEntity {
   @Column()
   text: string;
 
-  @Column()
-  nearAccounts: string[];
+  @Column(() => UserNearAccount, { array: true })
+  nearAccounts: UserNearAccount[];
 
   @Column()
   username: string;
@@ -20,5 +28,8 @@ export class User extends BaseEntity {
   profilePicture: string;
 
   @Column()
+  instagram: string;
+
+  @OneToMany(() => Nft, (nft) => nft.userId)
   nfts: Nft[];
 }
