@@ -30,7 +30,6 @@ export class NftService {
 
   async loadAllAccountNfts(accountId: string) {
     const user = await this.userService.findByNearAccount(accountId);
-
     const nftContracts = await this.nearIndexerService.findLikelyNFTs(
       accountId,
     );
@@ -63,7 +62,10 @@ export class NftService {
         this.loadAccountNft(accountId, nftContractDto, nft, userId),
       );
 
-    return this.nftContractRepository.update(nftContractId, nftContractDto);
+    return this.nftContractRepository.save({
+      id: nftContractId,
+      ...nftContractDto,
+    });
   }
 
   async loadAccountNft(
@@ -80,11 +82,12 @@ export class NftService {
       metadata,
       userId,
     );
+    const nftModel = await this.nftRepository.findOne({
+      contractId: nftContractDto.contractId,
+      tokenId: nftDto.tokenId,
+    });
 
-    return this.nftRepository.update(
-      { contractId: nftContractDto.contractId, tokenId: nftDto.tokenId },
-      nftDto,
-    );
+    return this.nftRepository.save({ ...nftModel, ...nftDto });
   }
 
   async loadNftMetadata(nftContractDto: NftContractDto, nft) {

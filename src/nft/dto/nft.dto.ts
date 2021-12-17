@@ -22,6 +22,7 @@ export function castNft(
   const tokenId = nftToken.id || nftToken.tokenId;
 
   return {
+    id: `${contractId}-${contractId}`,
     ...nftToken,
     contractId,
     userId,
