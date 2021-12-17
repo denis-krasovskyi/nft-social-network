@@ -52,7 +52,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
-      - URL=${BOT_HOST}
+      - URL=${DNS_HOST}
       - VALIDATION=http
       - STAGING=false
     ports:
