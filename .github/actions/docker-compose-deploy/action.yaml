@@ -13,5 +13,6 @@ runs:
     uses: aws-actions/amazon-ecr-login@v1
 
   - name: Start Docker Compose
+    shell: bash
     run: |
       docker-compose up -d
