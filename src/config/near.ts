@@ -8,6 +8,7 @@ export const near = registerAs('near', () => {
     helperUrl: process.env.NEAR_HELPER_URL,
     explorerUrl: process.env.NEAR_EXPLORER_URL,
     providerUrl: process.env.NEAR_PROVIDER_URL,
+    accountId: process.env.NEAR_ACCOUNT_ID,
     nearCredentialsDir: process.env.NEAR_CREDENTIALS_DIR || '.near-credentials',
   };
 });

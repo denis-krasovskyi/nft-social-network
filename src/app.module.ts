@@ -7,10 +7,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Neo4jConfig } from './neo4j/neo4j-config.interface';
 import { Neo4jModule } from './neo4j/neo4j.module';
 import { InstagramAuthModule } from '@nestjs-hybrid-auth/instagram';
-import { AuthModule } from './auth/auth.module';
 
+import { AuthModule } from './auth/auth.module';
 import { NearIndexerModule } from './near-indexer/near-indexer.module';
 import { NearApiModule } from './near-api/near-api.module';
+import { NftModule } from './nft/nft.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { NearApiModule } from './near-api/near-api.module';
     NearIndexerModule,
     NearApiModule,
     AuthModule,
+    NftModule,
   ],
   controllers: [AppController],
   providers: [AppService],
