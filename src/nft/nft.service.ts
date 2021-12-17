@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { FindConditions, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Nft } from './entities/nft.entity';
 import { NftContract } from './entities/nft-contract.entity';
 import { UserService } from 'src/user/user.service';
+import { NftQuery } from './dto/nft-query.dto';
 
 @Injectable()
 export class NftService {
@@ -127,5 +128,21 @@ export class NftService {
     }
 
     return nft.metadata;
+  }
+
+  async getAll(query: NftQuery): Promise<Nft[]> {
+    const { offset, limit, userId } = query;
+
+    const where: FindConditions<Nft> = {};
+
+    if (userId) {
+      where.userId = userId;
+    }
+
+    return this.nftRepository.find({
+      where,
+      skip: offset,
+      take: limit,
+    });
   }
 }

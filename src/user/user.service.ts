@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
-import { UserDto } from './dto/user.interface';
+import { UserDto } from './dto/update.user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -35,5 +35,12 @@ export class UserService {
 
   async findById(userId: string): Promise<User> {
     return this.userRepository.findOne(userId);
+  }
+
+  async update(userId: string, userDto: Partial<UserDto>) {
+    return this.userRepository.save({
+      id: userId,
+      ...userDto,
+    });
   }
 }
