@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 export abstract class BaseEntity {
-  @ObjectIdColumn()
+  @ObjectIdColumn({ unique: true })
   id: ObjectID;
 
   @Exclude()

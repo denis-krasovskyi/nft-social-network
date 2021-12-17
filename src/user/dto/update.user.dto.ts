@@ -1,6 +1,9 @@
+import { UserNearAccountDto } from './user-near-account.interface';
+
 export class UserDto {
-  nearAccounts: string[];
+  nearAccounts: UserNearAccountDto[];
   username?: string;
   bio?: string;
   profilePicture?: string;
+  instagram?: string;
 }

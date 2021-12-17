@@ -1,5 +1,6 @@
 import { BaseEntity } from 'src/common/base.entity';
 import { Column, Entity } from 'typeorm';
+import { User } from '../../user/entities/user.entity';
 
 export class NftMetadata {
   @Column()
@@ -62,9 +63,9 @@ export class Nft extends BaseEntity {
   @Column(() => NftMetadata)
   metadata: NftMetadata;
 
-  @Column()
-  posted: boolean;
+  @Column(() => User)
+  user: User;
 
   @Column()
-  postedAt: Date;
+  visible: boolean;
 }

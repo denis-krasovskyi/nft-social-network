@@ -21,8 +21,8 @@ import { NftController } from './nft.controller';
     HttpModule,
     UserModule,
   ],
+  controllers: [NftController],
   providers: [NftService, NftAggregatorService],
   exports: [NftService, NftAggregatorService],
-  controllers: [NftController],
 })
 export class NftModule {}

@@ -19,7 +19,9 @@ export class AuthService {
     let user = await this.userService.findByNearAccount(accountId);
 
     if (!user) {
-      user = await this.userService.create({ nearAccounts: [accountId] });
+      user = await this.userService.create({
+        nearAccounts: [{ accountId, enabled: true }],
+      });
       await this.nftService.loadAllAccountNfts(accountId);
     }
 
@@ -30,7 +32,10 @@ export class AuthService {
     const user = await this.userService.findByNearAccount(accountId);
 
     if (!user) {
-      await this.userService.addNearAccount(userId, accountId);
+      await this.userService.addNearAccount(userId, {
+        accountId,
+        enabled: true,
+      });
       await this.nftService.loadAllAccountNfts(accountId);
     }
 
