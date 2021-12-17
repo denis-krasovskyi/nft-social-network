@@ -4,7 +4,6 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import tweetnacl from 'tweetnacl';
 import { PublicKey } from 'near-api-js/lib/utils';
 
 import { NearApiService } from 'src/near-api/near-api.service';
@@ -34,10 +33,9 @@ export class AccountAccessGuard implements CanActivate {
 
     let isValid = true;
     try {
-      isValid = tweetnacl.sign.detached.verify(
+      isValid = PublicKey.fromString(publicKey).verify(
         Buffer.from(publicKey),
         Buffer.from(signature, 'base64'),
-        PublicKey.fromString(publicKey).data,
       );
     } catch (error) {
       throw new ForbiddenException('Invalid signature');

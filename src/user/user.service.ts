@@ -17,7 +17,6 @@ export class UserService {
     user.bio = userDto.bio;
     user.nearAccounts = userDto.nearAccounts;
     user.profilePicture = userDto.profilePicture;
-
     return this.userRepository.create(user);
   }
 
