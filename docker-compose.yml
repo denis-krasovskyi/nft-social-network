@@ -32,7 +32,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      MONGODB_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo/admin
+      MONGODB_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo/
+      MONGO_DATABASE_HOST: mongo
       NEO4J_USERNAME: ${NEO4J_USERNAME}
       NEO4J_PASSWORD: ${NEO4J_PASSWORD}
       NEO4J_HOST: neo4j
