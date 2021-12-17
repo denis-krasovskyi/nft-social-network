@@ -1,10 +1,10 @@
 import { BaseEntity } from 'src/common/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { Nft } from './nft.entity';
 
 @Entity()
 export class NftContract extends BaseEntity {
-  @Column()
+  @PrimaryColumn()
   contractId: string;
 
   @Column()
