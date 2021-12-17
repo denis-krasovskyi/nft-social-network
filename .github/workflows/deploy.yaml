@@ -1,0 +1,63 @@
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        description: Specify environment to run on. Valid values are develop, production
+      tag:
+        required: true
+        description: Image to deploy. Can be of format <ref>, <env>-<ref>, <branch>-latest, latest
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+  NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+  INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID }}
+  INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET }}
+  INSTAGRAM_CALLBACK_URL: ${{ secrets.INSTAGRAM_CALLBACK_URL }}
+  MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+  MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+
+jobs:
+  get-environment:
+    name: Get Environment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.get-environment.outputs.environment }}
+    steps:
+    - name: get environment
+      id: get-environment
+      shell: bash
+      run: |
+        set -x
+        if [[ "${{ github.ref }}" =~ ^refs/tags.* ]]
+        then
+          echo "::set-output name=environment::production"
+        elif [[ "${{ github.ref }}" =~ ^refs/heads/develop ]]
+        then
+          echo "::set-output name=environment::develop"
+        fi
+        if [[ "${{ github.event.inputs.environment }}" != "" ]]
+        then
+          echo "input was provided: ${{ github.event.inputs.environment }}"
+          echo "::set-output name=environment::${{ github.event.inputs.environment }}"
+        fi
+
+  deploy:
+    runs-on: ${{ needs.get-environment.outputs.environment }}
+    name: Deploy
+    needs:
+    - get-environment
+    environment:
+      name: ${{ needs.get-environment.outputs.environment }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set Environment
+      run: |
+        echo DOCKER_ENV_TAG=${{ github.event.inputs.tag }} >> $GITHUB_ENV
+        cat ".github/env.common" >>$GITHUB_ENV
+        cat ".github/env.${{ needs.get-environment.outputs.environment }}" >>$GITHUB_ENV
+    - name: Deploy
+      uses: ./.github/actions/docker-compose-deploy

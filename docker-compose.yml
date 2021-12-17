@@ -1,0 +1,64 @@
+version: '3.1'
+
+services:
+  neo4j:
+    image: neo4j:latest
+    restart: always
+    hostname: neo4j
+    container_name: neo4j
+    ports:
+      - '7687:7687'
+    volumes:
+    - "/data/neo4j:/data:rw"
+    environment:
+      NEO4J_AUTH: ${NEO4J_USERNAME}/${NEO4J_PASSWORD}
+
+  mongo:
+    image: mongo
+    restart: always
+    hostname: mongo
+    ports:
+      - 27017:27017
+    volumes:
+    - "/data/mongo:/data/db:rw"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: nft-social-network-api
+
+  api:
+    image: ${AWS_ECR_URL}:${DOCKER_ENV_TAG}
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      MONGODB_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo/admin
+      NEO4J_USERNAME: ${NEO4J_USERNAME}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+      NEO4J_HOST: neo4j
+      NEO4J_DATABASE: nft-social-network-api
+      INSTAGRAM_CLIENT_ID: ${INSTAGRAM_CLIENT_ID}
+      INSTAGRAM_CLIENT_SECRET: ${INSTAGRAM_CLIENT_SECRET}
+      INSTAGRAM_CALLBACK_URL: ${INSTAGRAM_CALLBACK_URL}
+    env_file:
+    - .github/env.common
+    - .github/env.${RUNNER_NAME}
+
+  nginx:
+    image: linuxserver/swag:1.20.0
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - URL=${DNS_HOST}
+      - VALIDATION=http
+      - STAGING=false
+    ports:
+      - 443:443
+      - 80:80
+    restart: unless-stopped
+    volumes:
+      - "./docker/linuxserver/default:/config/nginx/site-confs/default"
+
