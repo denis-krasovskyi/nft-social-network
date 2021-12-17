@@ -7,7 +7,7 @@ on:
         description: Specify environment to run on. Valid values are develop, production
   push:
     branches:
-    - develop
+    - master
     tags:
     - "**"
 
@@ -18,7 +18,6 @@ env:
   NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
   INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID }}
   INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET }}
-  INSTAGRAM_CALLBACK_URL: ${{ secrets.INSTAGRAM_CALLBACK_URL }}
   MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
   MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
