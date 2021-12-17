@@ -21,9 +21,9 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       namingStrategy,
     } = this.configService.get(name);
 
-    console.log('host is ${host}')
-    console.log('username is ${username}')
-    console.log('database is ${database}')
+    console.log(`host is ${host}`)
+    console.log(`username is ${username}`)
+    console.log(`database is ${database}`)
 
     return {
       name,
