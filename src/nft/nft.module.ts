@@ -10,6 +10,7 @@ import { NftAggregatorService } from './nft-aggregator.service';
 import { Nft } from './entities/nft.entity';
 import { NftContract } from './entities/nft-contract.entity';
 import { UserModule } from 'src/user/user.module';
+import { NftController } from './nft.controller';
 
 @Module({
   imports: [
@@ -22,5 +23,6 @@ import { UserModule } from 'src/user/user.module';
   ],
   providers: [NftService, NftAggregatorService],
   exports: [NftService, NftAggregatorService],
+  controllers: [NftController],
 })
 export class NftModule {}
