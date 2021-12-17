@@ -18,6 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       migrationsTableName,
       migrations,
       cli,
+      url,
       namingStrategy,
     } = this.configService.get(name);
 
@@ -34,6 +35,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       migrationsTableName,
       migrations,
       cli,
+      url,
       namingStrategy,
     };
   }
