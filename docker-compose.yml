@@ -1,0 +1,43 @@
+version: '3.1'
+
+services:
+  neo4j:
+    image: neo4j:latest
+    restart: always
+    hostname: neo4j
+    container_name: neo4j
+    ports:
+      - '7687:7687'
+    volumes:
+    - "/data/neo4j:/data:rw"
+    environment:
+      NEO4J_AUTH: ${NEO4J_USERNAME}/${NEO4J_PASSWORD}
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+    - "/data/mongo:/data/db:rw"
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGODB_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGODB_PASSWORD}
+
+  api:
+    image: ${AWS_ECR_URL}:${DOCKER_ENV_TAG}
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      MONGODB_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo
+      NEO4J_USERNAME: ${NEO4J_USERNAME}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+      NEO4J_HOST: neo4j
+      NEO4J_DATABASE: nft-social-network-api
+      INSTAGRAM_CLIENT_ID: ${INSTAGRAM_CLIENT_ID}
+      INSTAGRAM_CLIENT_SECRET: ${INSTAGRAM_CLIENT_SECRET}
+      INSTAGRAM_CALLBACK_URL: ${INSTAGRAM_CALLBACK_URL}
+    env_file:
+    - .github/env.common
+    - .github/env.${RUNNER_NAME}
