@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import { NearIndexerModule } from './near-indexer/near-indexer.module';
 import { NearApiModule } from './near-api/near-api.module';
 import { NftModule } from './nft/nft.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmConfigService } from './config/typeorm-config.service';
 
 @Module({
   imports: [
@@ -20,6 +22,10 @@ import { NftModule } from './nft/nft.module';
       load: configuration,
       validationSchema: ConfigValidationSchema,
       envFilePath: ['.env.local', '.env'],
+    }),
+    TypeOrmModule.forRootAsync({
+      name: 'database-mongo',
+      useClass: TypeOrmConfigService,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
