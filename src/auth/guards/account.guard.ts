@@ -15,8 +15,7 @@ export class AccountAccessGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
-    const [accountId, publicKey, signature] =
-      req.headers.authorization?.split(' ') || [];
+    const { accountId, publicKey, signature } = req.body;
 
     const account = await this.nearApiService.getAccount(accountId);
 

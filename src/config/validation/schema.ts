@@ -5,6 +5,7 @@ export const ConfigValidationSchema = Joi.object({
     .valid('development', 'production', 'test')
     .default('development'),
   PORT: Joi.number().default(3000),
+  JWT_SECRET: Joi.string().required(),
 
   MONGODB_URI: Joi.string().required(),
   NEAR_INDEXER_DATABASE_HOST: Joi.string().required(),
