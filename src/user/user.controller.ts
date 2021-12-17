@@ -11,8 +11,8 @@ import {
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.quard';
 
 import { UserService } from './user.service';
-import { UserProfileDto } from './dto/user-profile.interface';
 import { User } from './entities/user.entity';
+import { UserProfileDto } from './dto/user-profile.interface';
 
 @Controller('users')
 export class UserController {

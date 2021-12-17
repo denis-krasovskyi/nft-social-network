@@ -12,11 +12,6 @@ export const databaseMongo = registerAs(
   (): TypeOrmModuleOptions => ({
     type: 'mongodb',
     url: process.env.MONGODB_URI,
-    // host: process.env.MONGO_DATABASE_HOST,
-    // port: parseInt(process.env.MONGO_DATABASE_PORT, 10),
-    // database: process.env.MONGO_DATABASE_NAME,
-    // username: process.env.MONGO_DATABASE_USERNAME,
-    // password: process.env.MONGO_DATABASE_PASSWORD,
     entities: [Comment, User, Nft, NftContract, NftEvent],
     synchronize: false,
   }),

@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { User } from './entities/user.entity';
+import { UserDto } from './dto/update.user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 
-import { User } from './entities/user.entity';
-import { UserDto } from './dto/user.interface';
 import { UserProfileDto } from './dto/user-profile.interface';
 import { UserNearAccountDto } from './dto/user-near-account.interface';
 

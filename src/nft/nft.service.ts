@@ -8,7 +8,6 @@ import { ObjectId } from 'mongodb';
 
 import { NearIndexerService } from 'src/near-indexer/near-indexer.service';
 import { NearApiService } from 'src/near-api/near-api.service';
-import { UserService } from 'src/user/user.service';
 
 import { castNftContract, NftContractDto } from './dto/nft-contract.dto';
 import { castNft, NftDto } from './dto/nft.dto';
@@ -18,6 +17,7 @@ import {
   PaginationRequest,
   PaginationResponse,
 } from '../common/pagination.interface';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class NftService {
