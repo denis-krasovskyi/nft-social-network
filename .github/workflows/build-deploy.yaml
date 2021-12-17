@@ -21,6 +21,7 @@ env:
   INSTAGRAM_CALLBACK_URL: ${{ secrets.INSTAGRAM_CALLBACK_URL }}
   MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
   MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
 jobs:
   get-environment:

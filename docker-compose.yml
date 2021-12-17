@@ -40,6 +40,7 @@ services:
       INSTAGRAM_CLIENT_ID: ${INSTAGRAM_CLIENT_ID}
       INSTAGRAM_CLIENT_SECRET: ${INSTAGRAM_CLIENT_SECRET}
       INSTAGRAM_CALLBACK_URL: ${INSTAGRAM_CALLBACK_URL}
+      JWT_SECRET: ${JWT_SECRET}
     env_file:
     - .github/env.common
     - .github/env.${RUNNER_NAME}
