@@ -16,13 +16,14 @@ services:
   mongo:
     image: mongo
     restart: always
+    hostname: mongo
     ports:
       - 27017:27017
     volumes:
     - "/data/mongo:/data/db:rw"
     environment:
-      ME_CONFIG_BASICAUTH_USERNAME: ${MONGODB_USERNAME}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
 
   api:
     image: ${AWS_ECR_URL}:${DOCKER_ENV_TAG}
