@@ -24,6 +24,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: nft-social-network-api
 
   api:
     image: ${AWS_ECR_URL}:${DOCKER_ENV_TAG}
@@ -31,7 +32,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      MONGODB_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo
+      MONGODB_URI: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo/nft-social-network-api
       NEO4J_USERNAME: ${NEO4J_USERNAME}
       NEO4J_PASSWORD: ${NEO4J_PASSWORD}
       NEO4J_HOST: neo4j
