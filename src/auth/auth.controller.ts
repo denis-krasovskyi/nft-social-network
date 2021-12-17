@@ -1,22 +1,42 @@
-import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   InstagramAuthResult,
   UseInstagramAuth,
 } from '@nestjs-hybrid-auth/instagram';
 
-import { UserDto } from 'src/user/dto/user.dto';
 import { AuthService } from './auth.service';
+import { ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from './guards/jwt-auth.quard';
 import { AccountAccessGuard } from './guards/account.guard';
+import { ConnectWalletDto } from './dto/connect-wallet.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly authService: AuthService,
+  ) {}
 
-  // TODO: Rework with wallet callback
   @UseGuards(AccountAccessGuard)
-  @Get('near')
-  async loginWithNear(@Request() req): Promise<UserDto> {
-    return this.authService.loginWithNear(req.near.accountId);
+  @Post('near/login')
+  async loginWithNear(@Body() body: ConnectWalletDto): Promise<string> {
+    return this.authService.loginWithNearWallet(body.accountId);
+  }
+
+  @UseGuards(AccountAccessGuard, JwtAuthGuard)
+  @Post('near/connect-wallet')
+  async connectNearWallet(
+    @Request() req,
+    @Body() body: ConnectWalletDto,
+  ): Promise<boolean> {
+    return this.authService.connectNearWallet(req.user.userId, body.accountId);
   }
 
   @UseInstagramAuth()

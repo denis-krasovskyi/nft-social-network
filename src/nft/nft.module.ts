@@ -3,12 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
 
-import { Nft, NftSchema } from 'src/schemas/nft.schema';
+import { Nft, NftSchema } from 'src/nft/schemas/nft.schema';
 import {
   NftContract,
   NftContractSchema,
-} from 'src/schemas/nft-contract.schema';
-import { NftEvent, NftEventSchema } from 'src/schemas/nft-event.schema';
+} from 'src/nft/schemas/nft-contract.schema';
+import { NftEvent, NftEventSchema } from 'src/nft/schemas/nft-event.schema';
 import { NearIndexerModule } from 'src/near-indexer/near-indexer.module';
 import { NearApiModule } from 'src/near-api/near-api.module';
 

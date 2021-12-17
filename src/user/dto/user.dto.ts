@@ -1,3 +1,6 @@
 export interface UserDto {
-  accountId: string;
+  nearAccounts: string[];
+  username?: string;
+  bio?: string;
+  profilePicture?: string;
 }

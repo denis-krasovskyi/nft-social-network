@@ -5,12 +5,12 @@ import { Model } from 'mongoose';
 import { lastValueFrom, map } from 'rxjs';
 import { PromisePool } from '@supercharge/promise-pool';
 
-import { Nft, NftDocument } from 'src/schemas/nft.schema';
+import { Nft, NftDocument } from 'src/nft/schemas/nft.schema';
 import {
   NftContract,
   NftContractDocument,
-} from 'src/schemas/nft-contract.schema';
-import { NftEvent, NftEventDocument } from 'src/schemas/nft-event.schema';
+} from 'src/nft/schemas/nft-contract.schema';
+import { NftEvent, NftEventDocument } from 'src/nft/schemas/nft-event.schema';
 import { NearIndexerService } from 'src/near-indexer/near-indexer.service';
 import { NearApiService } from 'src/near-api/near-api.service';
 
