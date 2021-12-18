@@ -5,4 +5,13 @@ import { Entity, Column } from 'typeorm';
 export class Comment extends BaseEntity {
   @Column()
   text: string;
+
+  @Column()
+  parentId: string;
+
+  @Column()
+  userId: string;
+
+  @Column()
+  nftId: string;
 }
