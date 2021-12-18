@@ -18,6 +18,7 @@ import {
   PaginationResponse,
 } from '../common/pagination.interface';
 import { UserService } from 'src/user/user.service';
+import { SearchRequest } from '../common/search.interface';
 
 @Injectable()
 export class NftService {
@@ -58,7 +59,7 @@ export class NftService {
     visible: boolean,
   ): Promise<Nft> {
     const nftModel = await this.nftRepository.findOne({
-      where: { _id: ObjectId(nftId), userId },
+      where: { _id: ObjectId(nftId), userId: ObjectId(userId) },
     });
 
     if (!nftModel) {
@@ -77,7 +78,10 @@ export class NftService {
     visible: boolean,
   ): Promise<Nft[]> {
     const nftModels = await this.nftRepository.find({
-      where: { _id: { $in: nftIds.map((id) => ObjectId(id)) }, userId },
+      where: {
+        _id: { $in: nftIds.map((id) => ObjectId(id)) },
+        userId: ObjectId(userId),
+      },
     });
     return this.nftRepository.save(
       nftModels.map((nftModel) => ({ ...nftModel, visible })),
@@ -89,11 +93,11 @@ export class NftService {
     { offset = 0, limit = 10 }: PaginationRequest,
   ): Promise<PaginationResponse<Nft>> {
     const data = await this.nftRepository.find({
-      where: { userId },
-      skip: offset,
-      take: limit,
+      where: { userId: ObjectId(userId) },
+      skip: Number(offset),
+      take: Number(limit),
     });
-    const total = await this.nftRepository.count({ userId });
+    const total = await this.nftRepository.count({ userId: ObjectId(userId) });
     return {
       offset,
       limit,
@@ -106,17 +110,34 @@ export class NftService {
     offset = 0,
     limit = 10,
   }: PaginationRequest): Promise<PaginationResponse<Nft>> {
-    const data = await this.nftRepository.find({
-      where: { visible: true },
-      skip: offset,
-      take: limit,
-    });
-    const total = await this.nftRepository.count({});
+    const data = await this.getNftFeedAggregator()
+      .skip(Number(offset))
+      .limit(Number(limit))
+      .toArray();
+    const total = await this.nftRepository.count(this.getNftFeedMatch());
     return {
       offset,
       limit,
       total,
-      data,
+      data: data.map(this.buildNftFeed),
+    };
+  }
+
+  async searchNfts({
+    offset = 0,
+    limit = 10,
+    search,
+  }: SearchRequest): Promise<PaginationResponse<Nft>> {
+    const data = await this.getNftFeedAggregator(search)
+      .skip(Number(offset))
+      .limit(Number(limit))
+      .toArray();
+    const total = await this.nftRepository.count(this.getNftFeedMatch(search));
+    return {
+      offset,
+      limit,
+      total,
+      data: data.map(this.buildNftFeed),
     };
   }
 
@@ -212,5 +233,59 @@ export class NftService {
     }
 
     return nft.metadata;
+  }
+
+  private getNftFeedAggregator(search?: string) {
+    return this.nftRepository.aggregate([
+      {
+        $lookup: {
+          from: 'nft_contract',
+          localField: 'contractId',
+          foreignField: 'contractId',
+          as: 'contract',
+        },
+      },
+      { $addFields: { userObjectId: { $toObjectId: '$userId' } } },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'userObjectId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      { $match: this.getNftFeedMatch(search) },
+    ]);
+  }
+
+  private getNftFeedMatch(search?: string) {
+    if (search) {
+      const searchRe = new RegExp(`.*${search}.*`, 'i');
+      return {
+        visible: true,
+        $or: [
+          { 'metadata.title': searchRe },
+          { 'metadata.description': searchRe },
+          { nearAccountId: searchRe },
+        ],
+      };
+    }
+    return { visible: true };
+  }
+
+  private buildNftFeed(nft) {
+    const user = nft.user?.[0];
+    const contract = nft.contract?.[0];
+    return {
+      ...nft,
+      contract,
+      user: user && {
+        id: user.id,
+        username: user.username,
+        profilePicture: user.profilePicture,
+        instagram: user.instagram,
+        nearAccounts: user.nearAccounts.map(({ accountId }) => accountId),
+      },
+    };
   }
 }

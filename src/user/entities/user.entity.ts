@@ -1,6 +1,5 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column } from 'typeorm';
 import { BaseEntity } from 'src/common/base.entity';
-import { Nft } from 'src/nft/entities/nft.entity';
 
 export class UserNearAccount {
   @Column()
@@ -29,7 +28,4 @@ export class User extends BaseEntity {
 
   @Column()
   instagram: string;
-
-  @OneToMany(() => Nft, (nft) => nft.userId)
-  nfts: Nft[];
 }
