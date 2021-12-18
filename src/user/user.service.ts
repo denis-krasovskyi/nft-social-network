@@ -2,17 +2,19 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { UserDto } from './dto/update.user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 
 import { UserProfileDto } from './dto/user-profile.interface';
 import { UserNearAccountDto } from './dto/user-near-account.interface';
+import { SearchRequest } from '../common/search.interface';
+import { PaginationResponse } from '../common/pagination.interface';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepository: MongoRepository<User>,
   ) {}
 
   async create(userDto: UserDto): Promise<User> {
@@ -74,5 +76,34 @@ export class UserService {
 
   async findById(userId: string): Promise<User> {
     return this.userRepository.findOne({ where: { _id: ObjectId(userId) } });
+  }
+
+  async searchUsers({
+    offset = 0,
+    limit = 10,
+    search,
+  }: SearchRequest): Promise<PaginationResponse<User>> {
+    const searchRe = new RegExp(`.*${search}.*`, 'i');
+    const where = search
+      ? {
+          $or: [
+            { 'nearAccounts.accountId': searchRe },
+            { username: searchRe },
+            { instagram: searchRe },
+          ],
+        }
+      : undefined;
+    const data = await this.userRepository.find({
+      where,
+      skip: Number(offset),
+      take: Number(limit),
+    });
+    const total = await this.userRepository.count({ ...where });
+    return {
+      offset,
+      limit,
+      total,
+      data: data,
+    };
   }
 }

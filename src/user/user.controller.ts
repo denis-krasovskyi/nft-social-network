@@ -4,11 +4,14 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.quard';
+import { SearchRequest } from 'src/common/search.interface';
+import { PaginationResponse } from 'src/common/pagination.interface';
 
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
@@ -17,6 +20,14 @@ import { UserProfileDto } from './dto/user-profile.interface';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get('search')
+  async searchUsers(
+    @Query() query: SearchRequest,
+  ): Promise<PaginationResponse<User>> {
+    return this.userService.searchUsers(query);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('my')
