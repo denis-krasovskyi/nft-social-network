@@ -5,7 +5,7 @@ import { EventGateway } from './event.gateway';
 export class EventService {
   constructor(private readonly eventGateway: EventGateway) {}
 
-  broadcast(message: Record<string, unknown>) {
-    this.eventGateway.server.emit('broadcast', message);
+  emit(event: string, message: any) {
+    this.eventGateway.server.emit(event, message);
   }
 }

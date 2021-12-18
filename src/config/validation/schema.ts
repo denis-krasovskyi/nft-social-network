@@ -26,7 +26,7 @@ export const ConfigValidationSchema = Joi.object({
   NEO4J_PORT: Joi.number().default(7687),
   NEO4J_USERNAME: Joi.string().required(),
   NEO4J_PASSWORD: Joi.string().required(),
-  NEO4J_DATABASE: Joi.string().required(),
+  NEO4J_DATABASE: Joi.string(),
 
   INSTAGRAM_CLIENT_ID: Joi.string().required(),
   INSTAGRAM_CLIENT_SECRET: Joi.string().required(),

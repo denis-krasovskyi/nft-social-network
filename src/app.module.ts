@@ -15,6 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
 import { UserModule } from './user/user.module';
 import { CommentsModule } from './comments/comments.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -27,7 +28,6 @@ import { CommentsModule } from './comments/comments.module';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-
     Neo4jModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -55,6 +55,7 @@ import { CommentsModule } from './comments/comments.module';
     NftModule,
     UserModule,
     CommentsModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [AppService],
