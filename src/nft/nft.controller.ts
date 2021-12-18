@@ -15,6 +15,7 @@ import {
   PaginationRequest,
   PaginationResponse,
 } from 'src/common/pagination.interface';
+import { SearchRequest } from 'src/common/search.interface';
 import { NftService } from './nft.service';
 import { Nft } from './entities/nft.entity';
 
@@ -27,6 +28,13 @@ export class NftController {
     @Query() query: PaginationRequest,
   ): Promise<PaginationResponse<Nft>> {
     return this.nftService.getPopularNfts(query);
+  }
+
+  @Get('search')
+  async searchNfts(
+    @Query() query: SearchRequest,
+  ): Promise<PaginationResponse<Nft>> {
+    return this.nftService.searchNfts(query);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -1,4 +1,5 @@
 import * as camelcaseKeys from 'camelcase-keys';
+import { ObjectId } from 'mongodb';
 
 export interface NftDto {
   contractId: string;
@@ -24,7 +25,7 @@ export function castNft(
   return {
     ...nftToken,
     contractId,
-    userId,
+    userId: ObjectId(userId),
     nearAccountId,
     tokenId: tokenId,
     owner: nftToken.ownerId.account || nftToken.ownerId,
