@@ -31,4 +31,6 @@ export const ConfigValidationSchema = Joi.object({
   INSTAGRAM_CLIENT_ID: Joi.string().required(),
   INSTAGRAM_CLIENT_SECRET: Joi.string().required(),
   INSTAGRAM_CALLBACK_URL: Joi.string().required(),
+
+  NFT_AGGREGATION_INTERVAL: Joi.number().default(30000),
 });

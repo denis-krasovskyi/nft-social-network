@@ -4,7 +4,7 @@ import { BaseEntity } from 'src/common/base.entity';
 
 @Entity()
 export class NftEvent extends BaseEntity {
-  @Column()
+  @Column({ unique: true })
   receiptId: string;
 
   @Column()
@@ -20,7 +20,7 @@ export class NftEvent extends BaseEntity {
   tokenNewOwnerAccountId: string;
 
   @Column()
-  timestamp: number;
+  timestamp: string;
 
   @Column()
   type: NftEventKind;

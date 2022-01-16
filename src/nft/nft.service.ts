@@ -13,12 +13,15 @@ import { castNftContract, NftContractDto } from './dto/nft-contract.dto';
 import { castNft, NftDto } from './dto/nft.dto';
 import { Nft } from './entities/nft.entity';
 import { NftContract } from './entities/nft-contract.entity';
+import { NftEvent } from './entities/nft-event.enity';
 import {
   PaginationRequest,
   PaginationResponse,
 } from '../common/pagination.interface';
 import { UserService } from 'src/user/user.service';
 import { SearchRequest } from '../common/search.interface';
+import { NftEventDto } from './dto/nft-event.dto';
+import { NftUpdateDto } from './dto/nft-update.dto';
 
 @Injectable()
 export class NftService {
@@ -28,6 +31,9 @@ export class NftService {
 
     @InjectRepository(NftContract)
     private nftContractRepository: MongoRepository<NftContract>,
+
+    @InjectRepository(NftEvent)
+    private nftEventRepository: MongoRepository<NftEvent>,
 
     private readonly userService: UserService,
     private readonly nearIndexerService: NearIndexerService,
@@ -50,6 +56,18 @@ export class NftService {
     return this.nftContractRepository.save({
       ...nftContractModel,
       ...nftContractDto,
+    });
+  }
+
+  async createNftEvent(nftEventDto: NftEventDto) {
+    return this.nftEventRepository.save(nftEventDto);
+  }
+
+  async getLastNftEvent() {
+    return this.nftEventRepository.findOne({
+      order: {
+        timestamp: 'DESC',
+      },
     });
   }
 
@@ -155,6 +173,31 @@ export class NftService {
           user.id.toString(),
         ),
       );
+  }
+
+  async loadAccountNftUpdates(nftUpdates: NftUpdateDto[]) {
+    const uniqueUpdates = nftUpdates.filter((nftUpdate, index) => {
+      return (
+        index ===
+        nftUpdates.findIndex(
+          ({ accountId, contractId }) =>
+            nftUpdate.accountId === accountId &&
+            nftUpdate.contractId === contractId,
+        )
+      );
+    });
+    await PromisePool.withConcurrency(5)
+      .for(uniqueUpdates)
+      .process(async (nftUpdate) => this.loadAccountNftUpdate(nftUpdate));
+  }
+
+  async loadAccountNftUpdate(nftUpdate: NftUpdateDto) {
+    const user = await this.userService.findByNearAccount(nftUpdate.accountId);
+    return this.loadAccountNftsByContract(
+      nftUpdate.contractId,
+      nftUpdate.accountId,
+      user.id.toString(),
+    );
   }
 
   async loadAccountNftsByContract(
