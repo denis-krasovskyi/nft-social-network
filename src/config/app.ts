@@ -5,5 +5,6 @@ export const app = registerAs('app', () => {
     port: parseInt(process.env.PORT, 10),
     frontendUrl: process.env.FRONTEND_URL,
     jwtSecret: process.env.JWT_SECRET,
+    nftAggregationInterval: parseInt(process.env.NFT_AGGREGATION_INTERVAL, 10),
   };
 });

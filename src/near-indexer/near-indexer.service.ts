@@ -14,12 +14,17 @@ export class NearIndexerService {
     private connection: Connection,
   ) {}
 
-  findLastNftEvents(fromBlockTimestamp: number): Promise<AssetsNftEvent[]> {
+  findLastNftEvents(
+    fromBlockTimestamp: string,
+    limit: number,
+  ): Promise<AssetsNftEvent[]> {
     return this.assetsNftEventRepository
       .createQueryBuilder('event')
-      .where('event.emitted_at_block_timestamp >= :from', {
+      .where('event.emitted_at_block_timestamp > :from', {
         from: fromBlockTimestamp,
       })
+      .orderBy('event.emitted_at_block_timestamp', 'ASC')
+      .limit(limit)
       .getMany();
   }
 

@@ -78,6 +78,15 @@ export class UserService {
     return this.userRepository.findOne({ where: { _id: ObjectId(userId) } });
   }
 
+  async findAllNearAccounts(): Promise<string[]> {
+    const allUserAccounts = await this.userRepository.find({
+      select: ['nearAccounts'],
+    });
+    return allUserAccounts.flatMap(({ nearAccounts }) =>
+      nearAccounts.map(({ accountId }) => accountId),
+    );
+  }
+
   async searchUsers({
     offset = 0,
     limit = 10,
